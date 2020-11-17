@@ -2,9 +2,9 @@ package com.tp.driverlicensesystem.services;
 
 import com.tp.driverlicensesystem.model.License;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDate;
+
 
 public interface ILicenseService {
-    Calendar calculateLicenseTerm(License license);
+    LocalDate calculateLicenseTerm(License license);
 }

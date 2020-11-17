@@ -3,26 +3,27 @@ package com.tp.driverlicensesystem.services;
 import com.tp.driverlicensesystem.model.License;
 import com.tp.driverlicensesystem.model.Owner;
 import org.springframework.stereotype.Service;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.ZoneId;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 @Service
 public class ILicenseServiceImpl implements ILicenseService{
 
     @Override
-    public Calendar calculateLicenseTerm(License license) {
+    public LocalDate calculateLicenseTerm(License license) {
         //Deberia pedir el Titular a OwnerRepository con el id que llega en license
         Owner owner = new Owner();
-        Calendar test = new GregorianCalendar(1959, Calendar.APRIL, 13);
-        owner.setDateOfBirthday(test);
+        LocalDate test = LocalDate.of(1976, Month.NOVEMBER, 16);
 
+        owner.setDateOfBirthday(test);
 
         Integer ownerAge = getOwnerAge(owner.getDateOfBirthday());
         int add;
-        Calendar licenseTerm = Calendar.getInstance();
-        licenseTerm.set(Calendar.MONTH, owner.getDateOfBirthday().get(Calendar.MONTH));
-        licenseTerm.set(Calendar.DAY_OF_MONTH, owner.getDateOfBirthday().get(Calendar.DAY_OF_MONTH));
+
+        LocalDate licenseTerm = LocalDate.of(LocalDate.now().getYear(),owner.getDateOfBirthday().getMonthValue(), owner.getDateOfBirthday().getDayOfMonth());
 
 
         if (ownerAge<21){
@@ -55,22 +56,22 @@ public class ILicenseServiceImpl implements ILicenseService{
             }
         }
 
-        licenseTerm.set(Calendar.YEAR, licenseTerm.get(Calendar.YEAR) + add);
+        LocalDate licenseTermReturn = licenseTerm.plusYears(add);
 
-        System.out.println(licenseTerm.get(Calendar.YEAR) + "/"+(licenseTerm.get(Calendar.MONTH)+1)+"/"+licenseTerm.get(Calendar.DAY_OF_MONTH));
+        System.out.println("Fecha de expiracion de licencia: " + licenseTermReturn.toString());
 
-        return licenseTerm;
+        return licenseTermReturn;
     }
 
-    private Integer getOwnerAge (Calendar dateOfBirthday){
-        Calendar now = Calendar.getInstance();
-        Integer age = now.get(Calendar.YEAR) - dateOfBirthday.get(Calendar.YEAR);
+    private Integer getOwnerAge (LocalDate dateOfBirthday){
+        LocalDate now = LocalDate.now();
+        Integer age = now.getYear() - dateOfBirthday.getYear();
 
-        if (now.get(Calendar.DAY_OF_YEAR) < dateOfBirthday.get(Calendar.DAY_OF_YEAR)){
+        if (now.getDayOfYear() < dateOfBirthday.getDayOfYear()){
             age--;
         }
 
-        System.out.println(age);
+        System.out.println("Edad: " + age);
 
         return age;
     }

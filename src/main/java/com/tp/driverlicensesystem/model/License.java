@@ -1,22 +1,22 @@
 package com.tp.driverlicensesystem.model;
 
-import java.util.Calendar;
+import java.time.LocalDate;
 
 //Habria que etiquetarlo como ENTITY
 public class License {
 
     //Necesitamos una fecha de inicio de vigencia? La task de fecha de vencimiento lo dice.
 
-    private Calendar licenseTerm;
+    private LocalDate licenseTerm;
     private Owner licenseOwner;
 
     public License (){}
 
-    public Calendar getLicenseTerm() {
+    public LocalDate getLicenseTerm() {
         return licenseTerm;
     }
 
-    public void setLicenseTerm(Calendar licenseTerm) {
+    public void setLicenseTerm(LocalDate licenseTerm) {
         this.licenseTerm = licenseTerm;
     }
 

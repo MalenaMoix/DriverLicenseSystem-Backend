@@ -1,7 +1,7 @@
 package com.tp.driverlicensesystem.model;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 //Deberia etiquetarse con @Entity
 public class Owner {
@@ -11,7 +11,7 @@ public class Owner {
     private Integer document;
     private String name;
     private String lastName;
-    private Calendar dateOfBirthday;
+    private LocalDate dateOfBirthday;
     private String address;
     private String bloodType;
     private String rhFactor;
@@ -56,11 +56,11 @@ public class Owner {
         this.lastName = lastName;
     }
 
-    public Calendar getDateOfBirthday() {
+    public LocalDate getDateOfBirthday() {
         return dateOfBirthday;
     }
 
-    public void setDateOfBirthday(Calendar dateOfBirthday) {
+    public void setDateOfBirthday(LocalDate dateOfBirthday) {
         this.dateOfBirthday = dateOfBirthday;
     }
 

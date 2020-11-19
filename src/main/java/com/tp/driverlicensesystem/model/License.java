@@ -22,7 +22,7 @@ public class License {
     @Column
     private LocalDate licenseStart;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Owner licenseOwner;
 
     public License (){}

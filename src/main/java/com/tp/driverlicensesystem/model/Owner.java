@@ -30,7 +30,7 @@ public class Owner {
     @Column
     private Boolean isDonor;
 
-    @OneToMany(mappedBy = "licenseOwner", cascade = CascadeType.ALL,  orphanRemoval = true)
+    @OneToMany(mappedBy = "licenseOwner", fetch = FetchType.EAGER,cascade = CascadeType.ALL,  orphanRemoval = true)
     private List<License> licensesList;
 
     public Owner() {

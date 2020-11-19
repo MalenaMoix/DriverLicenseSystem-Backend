@@ -1,11 +1,11 @@
 package com.tp.driverlicensesystem.rest;
 
+import com.tp.driverlicensesystem.model.License;
+import com.tp.driverlicensesystem.model.Owner;
 import com.tp.driverlicensesystem.services.ILicenseService;
+import com.tp.driverlicensesystem.services.IOwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/issueLicence")
@@ -14,8 +14,17 @@ public class IssueLicenseController {
     @Autowired
     private ILicenseService iLicenseService;
 
-    @GetMapping
-    public void getOwnerById(){
-        iLicenseService.getOwnerById();
+    @Autowired
+    private IOwnerService iOwnerService;
+
+    @GetMapping(value = "/{id}")
+    public Owner getOwnerById(@PathVariable("id") Integer ownerId){
+        return iOwnerService.getOwnerById(ownerId);
     }
+
+    @PostMapping
+    public void postLicense(License license){
+        iLicenseService.saveLicense(license);
+    }
+
 }

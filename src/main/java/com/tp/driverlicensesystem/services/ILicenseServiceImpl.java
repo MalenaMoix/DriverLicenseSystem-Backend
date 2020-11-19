@@ -4,8 +4,11 @@ import com.tp.driverlicensesystem.model.License;
 import com.tp.driverlicensesystem.model.Owner;
 import com.tp.driverlicensesystem.repository.ILicenseRepo;
 import com.tp.driverlicensesystem.repository.IOwnerRepo;
+import com.tp.driverlicensesystem.services.IOwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -21,19 +24,29 @@ public class ILicenseServiceImpl implements ILicenseService{
     @Autowired
     private IOwnerRepo iOwnerRepo;
 
+    @Autowired
+    private IOwnerService iOwnerService;
+
     @Override
-    public LocalDate calculateLicenseTerm(License license) {
+    public LocalDate calculateLicenseTerm(Integer ownerId) {
         //Deberia pedir el Titular a OwnerRepository con el id que llega en license
         Owner owner = new Owner();
-        LocalDate test = LocalDate.of(1975, Month.NOVEMBER, 15);
 
-        owner.setDateOfBirthday(test);
+        //El owner ya existe porque fue buscado con el boton anteriormente, o creado.
+//
+        try {
+            owner = iOwnerService.getOwnerById(ownerId);
+            System.out.println(owner.getName() + " --- " + owner.getLicensesList().size());
+        }catch (Exception e){
+            //Fallo la busqueda a la base de datos.
+            e.printStackTrace();
 
-        Integer ownerAge = getOwnerAge(owner.getDateOfBirthday());
+        }
+
+        Integer ownerAge = iOwnerService.getOwnerAge(owner.getDateOfBirthday());
         int add;
 
         LocalDate licenseTerm = LocalDate.of(LocalDate.now().getYear(),owner.getDateOfBirthday().getMonthValue(), owner.getDateOfBirthday().getDayOfMonth());
-
 
         if (ownerAge<21){
             if (owner.getLicensesList().isEmpty()){
@@ -69,49 +82,19 @@ public class ILicenseServiceImpl implements ILicenseService{
 
         System.out.println("Fecha de expiracion de licencia: " + licenseTermReturn.toString());
 
+
         return licenseTermReturn;
     }
 
-    //TODO implementar metodo
     @Override
-    public void getOwnerById() {
-        System.out.println("Buscando titular");
-        Owner owner= iOwnerRepo.findById(40905305).get();;
-        owner.setName("TOMAS");
-        owner.setLastName("RAVELLI");
-        owner.setDateOfBirthday(LocalDate.of(1998,4,13));
-        owner.setAddress("15 DE AGOSTO, 495, MARCELINO ESCALADA");
-        owner.setDocument(40905305);
-        owner.setDonor(true);
-        owner.setBloodType("O+");
-        License license = new License();
-        License license2 = new License();
-        License license3 = new License();
-        owner.addLicense(license);
-        owner.addLicense(license2);
-        owner.addLicense(license3);
-        license.setLicenseOwner(owner);
-        license2.setLicenseOwner(owner);
-        license3.setLicenseOwner(owner);
-        iOwnerRepo.save(owner);
-
-
-        owner = iOwnerRepo.findById(40905305).get();
-        System.out.println(owner.getLicensesList().size());
-    }
-
-    private Integer getOwnerAge (LocalDate dateOfBirthday){
-        LocalDate now = LocalDate.now();
-        LocalDate birthdayThisYear = dateOfBirthday.withYear(now.getYear());
-
-        Integer age = now.getYear() - dateOfBirthday.getYear();
-
-        if (now.isBefore(birthdayThisYear)){
-            age--;
+    public void saveLicense(License license) {
+        license.setLicenseTerm(this.calculateLicenseTerm(license.getLicenseOwner().getDocument()));
+        try {
+            licenseRepo.save(license);
+        }catch (Exception e){
+            //FALLO EL GUARDADO DE LA LICENCIA
         }
-
-        System.out.println("Edad: " + age);
-
-        return age;
     }
+
+
 }

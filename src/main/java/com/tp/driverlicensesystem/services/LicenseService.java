@@ -24,7 +24,6 @@ public class LicenseService implements ILicenseService{
         Owner owner = new Owner();
 
         //El owner ya existe porque fue buscado con el boton anteriormente, o creado.
-//
         try {
             owner = iOwnerService.getOwnerById(ownerId);
             //System.out.println(owner.getName() + " --- " + owner.getLicensesList().size());

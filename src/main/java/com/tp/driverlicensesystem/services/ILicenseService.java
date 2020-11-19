@@ -7,4 +7,5 @@ import java.time.LocalDate;
 
 public interface ILicenseService {
     LocalDate calculateLicenseTerm(License license);
+    void getOwnerById();
 }

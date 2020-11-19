@@ -1,35 +1,40 @@
 package com.tp.driverlicensesystem.model;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
+@Entity
 //Deberia etiquetarse con @Entity
 public class Owner {
 
     //Ver si algun tipo de dato es distinto.
-    private String typeOfDocument; //Me parece que solo ibamos a aceptar DNI.
+
+    @Id
     private Integer document;
+    @Column(length = 50)
     private String name;
+    @Column(length = 50)
     private String lastName;
+    @Column
     private LocalDate dateOfBirthday;
+    @Column(length = 50)
     private String address;
+    @Column(length = 50)
+    private String observations;
+    @Column
     private String bloodType;
+    @Column
     private String rhFactor;
+    @Column
     private Boolean isDonor;
 
-
-    private ArrayList<License> licensesList;
+    @OneToMany(mappedBy = "licenseOwner", cascade = CascadeType.ALL,  orphanRemoval = true)
+    private List<License> licensesList;
 
     public Owner() {
         licensesList = new ArrayList<>();
-    }
-
-    public String getTypeOfDocument() {
-        return typeOfDocument;
-    }
-
-    public void setTypeOfDocument(String typeOfDocument) {
-        this.typeOfDocument = typeOfDocument;
     }
 
     public Integer getDocument() {
@@ -96,7 +101,15 @@ public class Owner {
         isDonor = donor;
     }
 
-    public ArrayList<License> getLicensesList() {
+    public String getObservations() {
+        return observations;
+    }
+
+    public void setObservations(String observations) {
+        this.observations = observations;
+    }
+
+    public List<License> getLicensesList() {
         return licensesList;
     }
 
@@ -105,6 +118,5 @@ public class Owner {
     }
 
     public void addLicense(License license){
-        licensesList.add(license);
-    }
+        licensesList.add(license);}
 }

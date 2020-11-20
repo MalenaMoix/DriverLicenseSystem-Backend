@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 
 @Service
-public class IOwnerServiceImpl implements IOwnerService{
+public class OwnerService implements IOwnerService{
 
     @Autowired
     private IOwnerRepo iOwnerRepo;

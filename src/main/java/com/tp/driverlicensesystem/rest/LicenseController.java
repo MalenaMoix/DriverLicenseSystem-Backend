@@ -8,19 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/issueLicence")
+@RequestMapping("/license")
 @CrossOrigin("*")
-public class IssueLicenseController {
+public class LicenseController {
     @Autowired
     private ILicenseService iLicenseService;
-
-    @Autowired
-    private IOwnerService iOwnerService;
-
-    @GetMapping(value = "/{id}")
-    public Owner getOwnerById(@PathVariable("id") Integer ownerId){
-        return iOwnerService.getOwnerById(ownerId);
-    }
 
     @PostMapping
     public void postLicense(License license){

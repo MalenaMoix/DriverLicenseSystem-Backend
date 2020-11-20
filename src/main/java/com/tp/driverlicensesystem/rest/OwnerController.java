@@ -4,17 +4,19 @@ import com.tp.driverlicensesystem.model.Owner;
 import com.tp.driverlicensesystem.services.ILicenseService;
 import com.tp.driverlicensesystem.services.IOwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/registerUser")
+@RequestMapping("/owner")
 @CrossOrigin("*")
-public class RegisterUserController {
+public class OwnerController {
     @Autowired
     private IOwnerService iOwnerService;
+
+    @GetMapping(value = "/{id}")
+    public Owner getOwnerById(@PathVariable("id") Integer ownerId){
+        return iOwnerService.getOwnerById(ownerId);
+    }
 
     @PostMapping
     public void saveOwner(Owner owner){

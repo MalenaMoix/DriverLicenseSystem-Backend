@@ -16,13 +16,10 @@ import java.time.ZoneId;
 
 
 @Service
-public class ILicenseServiceImpl implements ILicenseService{
+public class LicenseService implements ILicenseService{
 
     @Autowired
     private ILicenseRepo licenseRepo;
-
-    @Autowired
-    private IOwnerRepo iOwnerRepo;
 
     @Autowired
     private IOwnerService iOwnerService;

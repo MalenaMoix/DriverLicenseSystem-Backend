@@ -45,6 +45,10 @@ public class OwnerService implements IOwnerService{
 
         try {
             owner = iOwnerRepo.findById(ownerId).get();
+            //Hacemos esto para no generar un StackOverflow del JSON
+            //xq un owner tiene licencias y una licencia tiene un owner y en el JSON se llaman recursivamente
+            //Aca una licencia tiene un OBJETO owner
+            owner.setLicensesList(null);
         }
         catch (Exception e){
 

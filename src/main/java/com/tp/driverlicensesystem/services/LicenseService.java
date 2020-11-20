@@ -3,16 +3,10 @@ package com.tp.driverlicensesystem.services;
 import com.tp.driverlicensesystem.model.License;
 import com.tp.driverlicensesystem.model.Owner;
 import com.tp.driverlicensesystem.repository.ILicenseRepo;
-import com.tp.driverlicensesystem.repository.IOwnerRepo;
-import com.tp.driverlicensesystem.services.IOwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.time.ZoneId;
 
 
 @Service
@@ -33,17 +27,17 @@ public class LicenseService implements ILicenseService{
 //
         try {
             owner = iOwnerService.getOwnerById(ownerId);
-            System.out.println(owner.getName() + " --- " + owner.getLicensesList().size());
+            //System.out.println(owner.getName() + " --- " + owner.getLicensesList().size());
         }catch (Exception e){
             //Fallo la busqueda a la base de datos.
             e.printStackTrace();
 
         }
 
-        Integer ownerAge = iOwnerService.getOwnerAge(owner.getDateOfBirthday());
+        Integer ownerAge = iOwnerService.getOwnerAge(owner.getBirthDate());
         int add;
 
-        LocalDate licenseTerm = LocalDate.of(LocalDate.now().getYear(),owner.getDateOfBirthday().getMonthValue(), owner.getDateOfBirthday().getDayOfMonth());
+        LocalDate licenseTerm = LocalDate.of(LocalDate.now().getYear(),owner.getBirthDate().getMonthValue(), owner.getBirthDate().getDayOfMonth());
 
         if (ownerAge<21){
             if (owner.getLicensesList().isEmpty()){
@@ -85,7 +79,8 @@ public class LicenseService implements ILicenseService{
 
     @Override
     public void saveLicense(License license) {
-        license.setLicenseTerm(this.calculateLicenseTerm(license.getLicenseOwner().getDocument()));
+        LocalDate newLicenseDate = LocalDate.now();
+        license.setLicenseStart(newLicenseDate);
         try {
             licenseRepo.save(license);
         }catch (Exception e){

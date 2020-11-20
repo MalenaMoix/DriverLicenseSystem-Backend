@@ -18,7 +18,7 @@ public class Owner {
     @Column(length = 50)
     private String lastName;
     @Column
-    private LocalDate dateOfBirthday;
+    private LocalDate birthDate;
     @Column(length = 50)
     private String address;
     @Column(length = 50)
@@ -61,12 +61,12 @@ public class Owner {
         this.lastName = lastName;
     }
 
-    public LocalDate getDateOfBirthday() {
-        return dateOfBirthday;
+    public LocalDate getBirthDate() {
+        return birthDate;
     }
 
-    public void setDateOfBirthday(LocalDate dateOfBirthday) {
-        this.dateOfBirthday = dateOfBirthday;
+    public void setBirthDate(LocalDate dateOfBirthday) {
+        this.birthDate = dateOfBirthday;
     }
 
     public String getAddress() {

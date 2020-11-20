@@ -1,15 +1,11 @@
 package com.tp.driverlicensesystem;
 
-import com.tp.driverlicensesystem.model.License;
 import com.tp.driverlicensesystem.model.Owner;
 import com.tp.driverlicensesystem.services.ILicenseService;
-import com.tp.driverlicensesystem.services.ILicenseServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import java.time.LocalDate;
 
 
 @SpringBootApplication

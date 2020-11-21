@@ -19,13 +19,16 @@ public class LicenseController {
         iLicenseService.saveLicense(license);
     }
 
-    @PostMapping(value = "/getCostAndValidUntil")
-    public License getCostAndValidUntil(@RequestBody License license){
-        System.out.println(license.getLicenseOwner().getDocument());
-        license.setLicenseTerm(iLicenseService.calculateLicenseTerm(license.getLicenseOwner().getDocument()));
+    @GetMapping(value = "/{id}/{licenseClass}")
+    public License getCostAndValidUntil(@PathVariable("id") Integer document, @PathVariable("licenseClass") String licenseClass){
+        System.out.println(document);
+        License license = new License();
+        license.setLicenseClass(licenseClass);
+        license.setLicenseTerm(iLicenseService.calculateLicenseTerm(document, license));
+
         //TODO hacer el metodo para calcular el costo
         license.setLicenseCost(42.50);
-        //System.out.println(license.toString());
+        System.out.println(license.toString());
         return license;
     }
 }

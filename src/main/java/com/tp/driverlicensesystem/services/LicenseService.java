@@ -19,7 +19,7 @@ public class LicenseService implements ILicenseService{
     private IOwnerService iOwnerService;
 
     @Override
-    public LocalDate calculateLicenseTerm(Integer ownerId) {
+    public LocalDate calculateLicenseTerm(Integer ownerId, License license) {
         //Deberia pedir el Titular a OwnerRepository con el id que llega en license
         Owner owner = new Owner();
 
@@ -33,6 +33,7 @@ public class LicenseService implements ILicenseService{
             e.printStackTrace();
 
         }
+        license.setLicenseOwner(owner);
 
         Integer ownerAge = iOwnerService.getOwnerAge(owner.getBirthDate());
         int add;

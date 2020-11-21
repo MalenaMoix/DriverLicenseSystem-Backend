@@ -76,14 +76,6 @@ public class License {
         this.licenseTerm = licenseTerm;
     }
 
-//    public Owner getLicenseOwner() {
-//        return licenseOwner;
-//    }
-
-//    public void setLicenseOwner(Owner licenseOwner) {
-//        this.licenseOwner = licenseOwner;
-//    }
-
     @ManyToOne
     public Owner getLicenseOwner() {
         return licenseOwner;

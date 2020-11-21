@@ -22,7 +22,7 @@ public class DriverLicenseSystemApplication implements CommandLineRunner {
 
         Owner owner = new Owner();
         owner.setDocument(40905305);
-        iLicenseService.calculateLicenseTerm(owner.getDocument());
+        //iLicenseService.calculateLicenseTerm(owner.getDocument());
     }
 
 }

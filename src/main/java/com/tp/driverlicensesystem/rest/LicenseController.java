@@ -5,6 +5,7 @@ import com.tp.driverlicensesystem.model.Owner;
 import com.tp.driverlicensesystem.services.ILicenseService;
 import com.tp.driverlicensesystem.services.IOwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,21 +15,33 @@ public class LicenseController {
     @Autowired
     private ILicenseService iLicenseService;
 
+    @Autowired
+    private IOwnerService iOwnerService;
+
     @PostMapping
-    public void postLicense(@RequestBody License license){
-        iLicenseService.saveLicense(license);
+    public String postLicense(@RequestBody License license){
+        String message = iLicenseService.saveLicense(license);
+        System.out.println(ResponseEntity.ok(message).getBody());
+        return ResponseEntity.ok(message).getBody();
     }
 
     @GetMapping(value = "/{id}/{licenseClass}")
     public License getCostAndValidUntil(@PathVariable("id") Integer document, @PathVariable("licenseClass") String licenseClass){
-        System.out.println(document);
-        License license = new License();
-        license.setLicenseClass(licenseClass);
-        license.setLicenseTerm(iLicenseService.calculateLicenseTerm(document, license));
+        try {
+            Owner owner = new Owner();
+            owner = iOwnerService.getOwnerById(document);
+            Integer ownerAge = iOwnerService.getOwnerAge(owner.getBirthDate());
 
-        //TODO hacer el metodo para calcular el costo
-        license.setLicenseCost(42.50);
-        System.out.println(license.toString());
-        return license;
+            System.out.println(document);
+            License license = new License();
+            license.setLicenseClass(licenseClass);
+            license.setLicenseTerm(iLicenseService.calculateLicenseTerm(document, license, ownerAge, owner));
+
+            //TODO hacer el metodo para calcular el costo
+            license.setLicenseCost(42.50);
+            return license;
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

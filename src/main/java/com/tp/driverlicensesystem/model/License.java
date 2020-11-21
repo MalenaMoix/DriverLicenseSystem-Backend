@@ -15,16 +15,16 @@ public class License {
     @Column
     private LocalDate licenseTerm;
     @Column
-    private String licenseClass;
+    public String licenseClass;
     @Column
     private Double licenseCost;
     @Column (length = 50)
-    private String observations;
+    public String observations;
     @Column
     private LocalDate licenseStart;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    private Owner licenseOwner;
+    public Owner licenseOwner;
 
     public License (){}
 

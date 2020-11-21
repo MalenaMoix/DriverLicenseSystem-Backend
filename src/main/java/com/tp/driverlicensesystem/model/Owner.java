@@ -12,7 +12,7 @@ public class Owner {
     //Ver si algun tipo de dato es distinto.
 
     @Id
-    private Integer document;
+    public Integer document;
     @Column(length = 50)
     private String name;
     @Column(length = 50)

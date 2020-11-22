@@ -9,5 +9,4 @@ public class DriverLicenseSystemApplication {
     public static void main(String[] args) {
         SpringApplication.run(DriverLicenseSystemApplication.class, args);
     }
-
 }

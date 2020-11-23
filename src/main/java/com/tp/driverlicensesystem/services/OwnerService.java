@@ -32,6 +32,13 @@ public class OwnerService implements IOwnerService{
     @Override
     public String saveOwner(Owner owner) {
 
+        //CHECKEAR ANTES DE VALIDAR LOS DATOS QUE NO EXISTA UN TITULAR CON EL MISMO DOCUMENTO
+        Owner auxOwner = getOwnerById(owner.getDocument());
+
+        if(auxOwner.getDocument() == owner.getDocument()){
+            return "Titular ya existente";
+        }
+
         //VALIDACIONES DE LOS ATRIBUTOS DEL TITULAR
 
         if(String.valueOf(owner.getDocument()).matches("[0-9]{7}|[0-9]{8}")){

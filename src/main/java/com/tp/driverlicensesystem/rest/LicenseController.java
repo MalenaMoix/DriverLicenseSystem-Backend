@@ -5,6 +5,7 @@ import com.tp.driverlicensesystem.model.Owner;
 import com.tp.driverlicensesystem.services.ILicenseService;
 import com.tp.driverlicensesystem.services.IOwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,10 +20,16 @@ public class LicenseController {
     private IOwnerService iOwnerService;
 
     @PostMapping
-    public String postLicense(@RequestBody License license){
+    public ResponseEntity<Object> postLicense(@RequestBody License license){
         String message = iLicenseService.saveLicense(license);
-        System.out.println(ResponseEntity.ok(message).getBody());
-        return ResponseEntity.ok(message).getBody();
+        switch(message){
+            case "success":
+                return new ResponseEntity<>(HttpStatus.OK);
+            case "forbidden":
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            default:
+                return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping(value = "/{id}/{licenseClass}")

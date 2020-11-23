@@ -5,9 +5,6 @@ import java.time.LocalDate;
 
 @Entity
 public class License {
-
-    //Necesitamos una fecha de inicio de vigencia? La task de fecha de vencimiento lo dice.
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer idLicense;
@@ -22,6 +19,8 @@ public class License {
     public String observations;
     @Column
     private LocalDate licenseStart;
+    @Column
+    private boolean isRevoked;
 
     @ManyToOne(fetch = FetchType.EAGER)
     public Owner licenseOwner;
@@ -74,6 +73,14 @@ public class License {
 
     public void setLicenseTerm(LocalDate licenseTerm) {
         this.licenseTerm = licenseTerm;
+    }
+
+    public boolean getIsRevoked() {
+        return isRevoked;
+    }
+
+    public void setIsRevoked(boolean isRevoked) {
+        this.isRevoked = isRevoked;
     }
 
     @ManyToOne

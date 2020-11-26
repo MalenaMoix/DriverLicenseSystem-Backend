@@ -20,13 +20,13 @@ public class LicenseController {
     private IOwnerService iOwnerService;
 
     @PostMapping
-    public ResponseEntity<Object> postLicense(@RequestBody License license){
+    public ResponseEntity<String> postLicense(@RequestBody License license){
         String message = iLicenseService.saveLicense(license);
         switch(message){
             case "success":
-                return new ResponseEntity<>(HttpStatus.OK);
+                return new ResponseEntity<>("Se guardo la licencia",HttpStatus.OK);
             case "forbidden":
-                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+                return new ResponseEntity<>("Titular no apto para esta licencia.",HttpStatus.FORBIDDEN);
             default:
                 return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -34,15 +34,15 @@ public class LicenseController {
 
     @GetMapping(value = "/{id}/{licenseClass}")
     public License getCostAndValidUntil(@PathVariable("id") Integer document, @PathVariable("licenseClass") String licenseClass){
+        System.out.println(document);
+        License license = new License();
+        license.setLicenseClass(licenseClass);
+
         try {
             Owner owner = new Owner();
             owner = iOwnerService.getOwnerById(document);
-            Integer ownerAge = iOwnerService.getOwnerAge(owner.getBirthDate());
-
-            System.out.println(document);
-            License license = new License();
-            license.setLicenseClass(licenseClass);
-            license.setLicenseTerm(iLicenseService.calculateLicenseTerm(document, license, ownerAge, owner));
+            license.setLicenseOwner(owner);
+            license.setLicenseTerm(iLicenseService.calculateLicenseTerm(owner));
 
             //TODO hacer el metodo para calcular el costo
             license.setLicenseCost(42.50);

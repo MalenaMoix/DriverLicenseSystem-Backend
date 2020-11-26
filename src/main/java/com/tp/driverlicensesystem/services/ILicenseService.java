@@ -7,6 +7,6 @@ import java.time.LocalDate;
 
 
 public interface ILicenseService {
-    LocalDate calculateLicenseTerm(Integer ownerId, License license, Integer ownerAge, Owner owner);
+    LocalDate calculateLicenseTerm(Owner owner);
     String saveLicense(License license);
 }

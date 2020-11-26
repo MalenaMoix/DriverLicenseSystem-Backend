@@ -9,4 +9,5 @@ public interface IOwnerService {
     Integer getOwnerAge(LocalDate dateOfBirthday);
     void saveOwner(Owner owner);
     Owner getOwnerById(Integer ownerId);
+    Owner getOwnerByIdWithLicensesList(Integer ownerId);
 }

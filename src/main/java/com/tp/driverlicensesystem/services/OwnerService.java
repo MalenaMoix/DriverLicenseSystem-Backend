@@ -57,4 +57,19 @@ public class OwnerService implements IOwnerService{
 
         return owner;
     }
+
+    @Override
+    public Owner getOwnerByIdWithLicensesList(Integer ownerId) {
+
+        Owner owner = new Owner();
+
+        try {
+            owner = iOwnerRepo.findById(ownerId).get();
+        }
+        catch (Exception e){
+
+        }
+
+        return owner;
+    }
 }

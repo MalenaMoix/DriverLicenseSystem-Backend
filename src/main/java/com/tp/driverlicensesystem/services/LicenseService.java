@@ -195,12 +195,15 @@ public class LicenseService implements ILicenseService{
 
             System.out.println(license.toString());
 
-            try {
-                licenseRepo.save(license);
-            } catch (Exception e) {
-                System.out.println("Viene a este catch");
-                stringReturn = "No se ha podido guardar la licencia, intente nuevamente";
+            if(stringReturn.equals("success")){
+                try {
+                    licenseRepo.save(license);
+                } catch (Exception e) {
+                    System.out.println("Viene a este catch");
+                    stringReturn = "No se ha podido guardar la licencia, intente nuevamente";
+                }
             }
+
         }catch (Exception e){
             e.printStackTrace();
             stringReturn = "No se ha podido guardar la licencia, intente nuevamente";

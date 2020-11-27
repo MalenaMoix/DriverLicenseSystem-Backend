@@ -193,7 +193,6 @@ public class LicenseService implements ILicenseService{
             LocalDate newLicenseDate = LocalDate.now();
             license.setLicenseStart(newLicenseDate);
 
-            license.setIsRevoked(false);
             System.out.println(license.toString());
 
             try {

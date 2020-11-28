@@ -24,8 +24,6 @@ public class OwnerService implements IOwnerService{
             age--;
         }
 
-        System.out.println("Edad: " + age);
-
         return age;
     }
 

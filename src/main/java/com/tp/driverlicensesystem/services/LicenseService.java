@@ -22,18 +22,6 @@ public class LicenseService implements ILicenseService{
     @Override
     public LocalDate calculateLicenseTerm(Owner owner) {
 
-//        Owner owner = new Owner();
-//
-//        //El owner ya existe porque fue buscado con el boton anteriormente, o creado.
-//        try {
-//            owner = iOwnerService.getOwnerById(ownerId);
-//            //System.out.println(owner.getName() + " --- " + owner.getLicensesList().size());
-//        }catch (Exception e){
-//            //Fallo la busqueda a la base de datos.
-//            e.printStackTrace();
-//
-//        }
-
         int ownerAge = iOwnerService.getOwnerAge(owner.getBirthDate());
         int add;
         LocalDate licenseTerm = LocalDate.of(LocalDate.now().getYear(),owner.getBirthDate().getMonthValue(), owner.getBirthDate().getDayOfMonth());
@@ -68,7 +56,7 @@ public class LicenseService implements ILicenseService{
             }
         }
         LocalDate licenseTermReturn = licenseTerm.plusYears(add);
-        System.out.println("Fecha de expiracion de licencia: " + licenseTermReturn.toString());
+
         return licenseTermReturn;
     }
 

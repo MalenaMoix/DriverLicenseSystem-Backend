@@ -40,7 +40,7 @@ public class LicenseController {
 
         try {
             Owner owner = new Owner();
-            owner = iOwnerService.getOwnerById(document);
+            owner = iOwnerService.getOwnerByIdWithLicensesList(document);
             license.setLicenseOwner(owner);
             license.setLicenseTerm(iLicenseService.calculateLicenseTerm(owner));
 

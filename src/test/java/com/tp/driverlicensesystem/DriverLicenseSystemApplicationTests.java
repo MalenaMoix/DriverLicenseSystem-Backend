@@ -65,7 +65,8 @@ class DriverLicenseSystemApplicationTests {
         }
 
         for(i = 0; i<8; i++){
-            Assertions.assertThat(licenseList.get(i).getLicenseTerm().equals(birthDatesResultList.get(i)));
+            System.out.println(licenseList.get(i).getLicenseTerm() + "--- " + birthDatesResultList.get(i));
+            Assert.isTrue(licenseList.get(i).getLicenseTerm().equals(birthDatesResultList.get(i)),"The dates should be equals");
         }
     }
 
@@ -83,7 +84,7 @@ class DriverLicenseSystemApplicationTests {
         birthDatesList.add(localDate);
         localDate = LocalDate.of(1953,4,13);
         birthDatesList.add(localDate);
-        localDate = LocalDate.of(1960,12,20);
+        localDate = LocalDate.of(1959,12,20);
         birthDatesList.add(localDate);
         localDate = LocalDate.of(1949,4,13);
         birthDatesList.add(localDate);

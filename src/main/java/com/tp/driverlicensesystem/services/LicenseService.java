@@ -62,36 +62,30 @@ public class LicenseService implements ILicenseService{
 
     @Override
     public String saveLicense(License license) {
-        // TODO Ver por que el save esta dando error
-
-        String licenseClass = license.licenseClass;
-        String stringReturn = "success";
 
         try {
-            System.out.println(license.toString());
+            String licenseClass = license.licenseClass;
             Owner owner = iOwnerService.getOwnerByIdWithLicensesList(license.getLicenseOwner().getDocument());
             List<License> licensesList = owner.getLicensesList();
             Integer ownerAge = iOwnerService.getOwnerAge(owner.getBirthDate());
             boolean areClassesCDE = licenseClass.equals("C") || licenseClass.equals("D") || licenseClass.equals("E");
 
             //TODO REFACTORIZAR este FOR por un WHILE.
-           for (License license1:licensesList){
+            for (License license1:licensesList){
                 if (!license1.getIsRevoked() && license1.getLicenseClass().equals(license.getLicenseClass())){
-                    stringReturn = "forbidden";
+                    return "forbidden";
                 }
-           }
+            }
+
             if (ownerAge < 17) {
                 //return "El solicitante debe tener 17 años";
-                stringReturn = "forbidden";
-            }else{
-                if (areClassesCDE && ownerAge < 21) {
-                    //return "El solicitante debe tener 21 años";
-                    stringReturn = "forbidden";
-                }
+                return "forbidden";
             }
-            if (licenseClass.equals("D") || licenseClass.equals("E")) {
+            if (areClassesCDE && ownerAge < 21) {
+                //return "El solicitante debe tener 21 años";
+                return "forbidden";
+            }
 
-            }
             if (areClassesCDE) {
                 LocalDate yearAgo = LocalDate.now().minusYears(1);
                 boolean hasLicenseB = false;
@@ -101,7 +95,7 @@ public class LicenseService implements ILicenseService{
 
                 if (licensesList == null || licensesList.isEmpty()) {
                     //return "El solicitante no posee una licencia de tipo B";
-                    stringReturn = "forbidden";
+                    return "forbidden";
                 }
                 for (License lic: licensesList) {
                     if (lic.getLicenseClass().equals("B")) {
@@ -115,42 +109,46 @@ public class LicenseService implements ILicenseService{
                 }
                 if (!hasLicenseB) {
                     //return "El solicitante no posee una licencia de tipo B";
-                    stringReturn = "forbidden";
+                    return "forbidden";
                 }
 
                 if (hasLicenseB && !licenseB.getLicenseStart().isAfter(yearAgo)) {
                     //return "El solicitante no posee una licencia de tipo B entregado en el ultimo año";
-                    stringReturn = "forbidden";
+                    return "forbidden";
                 }
 
                 // Si una persona solicita una licencia tipo D o E y tiene licencia tipo B o C, el sistema revoca la licencia existente y se emite la nueva licencia tipo D o E.
                 // Si una persona solicita una licencia tipo C y tiene licencia tipo B, el sistema revoca la licencia existente y se emite la nueva licencia tipo C.
                 if (hasLicenseB) {
                     licenseB.setIsRevoked(true);
+                    //Actualizar la licencia en el repositorio, con el atributo isRevoked modificado.
+                    licenseRepo.save(licenseB);
                 }
                 if (hasLicenseC) {
                     licenseC.setIsRevoked(true);
+                    //Actualizar la licencia en el repositorio, con el atributo isRevoked modificado.
+                    licenseRepo.save(license);
                 }
             }
             if (ownerAge > 65 && areClassesCDE) {
                 if (licensesList == null) {
                     //return "El solicitante debe tener una licencia de tipo profesional";
-                    stringReturn = "forbidden";
+                    return "forbidden";
                 }
                 if (licensesList.size() == 0) {
                     //return "El solicitante debe tener una licencia de tipo profesional";
-                    stringReturn = "forbidden";
+                    return "forbidden";
                 }
 
                 boolean hasProfesionalLicense = false;
                 for (License lic: licensesList) {
-                    if (lic.getLicenseClass().equals("C") || lic.getLicenseClass().equals("D") || lic.getLicenseClass().equals("D")) {
+                    if (lic.getLicenseClass().equals("C") || lic.getLicenseClass().equals("D") || lic.getLicenseClass().equals("E")) {
                         hasProfesionalLicense = true;
                     }
                 }
                 if (!hasProfesionalLicense) {
                     //return "El solicitante debe tener una licencia de tipo profesional";
-                    stringReturn = "forbidden";
+                    return "forbidden";
                 }
             }
             if (licenseClass.equals("B") || licenseClass.equals("C")) {
@@ -162,40 +160,41 @@ public class LicenseService implements ILicenseService{
                 }
                 if (!hasOtherLicense) {
                     //return "El solicitante debe tener una licencia de tipo D o de tipo E";
-                    stringReturn = "forbidden";
+                    return "forbidden";
                 }
             }
             if (licenseClass.equals("B")) {
                 boolean hasLicenseC = false;
                 for (License lic: licensesList) {
-                    if (lic.getLicenseClass().equals("C")) {
+                    if (lic.getLicenseClass().equals("C") && (!lic.getIsRevoked() || lic.getLicenseTerm().isAfter(LocalDate.now()))) {
                         hasLicenseC = true;
                     }
                 }
-                if (!hasLicenseC) {
-                    //return "El solicitante debe tener una licencia de tipo C";
-                    stringReturn = "forbidden";
+                if (hasLicenseC) {
+                    //return "El solicitante ya tiene una licencia de tipo C";
+                    return "forbidden";
                 }
             }
 
+            license.setLicenseClass(licenseClass);
+            license.setLicenseOwner(owner);
             LocalDate newLicenseDate = LocalDate.now();
             license.setLicenseStart(newLicenseDate);
-
+            LocalDate licenseTerm = calculateLicenseTerm(owner);
+            license.setLicenseTerm(licenseTerm);
+            license.setIsRevoked(false);
             System.out.println(license.toString());
 
-            if(stringReturn.equals("success")){
-                try {
-                    licenseRepo.save(license);
-                } catch (Exception e) {
-                    System.out.println("Viene a este catch");
-                    stringReturn = "No se ha podido guardar la licencia, intente nuevamente";
-                }
+            try {
+                licenseRepo.save(license);
+                return "success";
+            } catch (Exception e) {
+                System.out.println("Viene a este catch");
+                return "No se ha podido guardar la licencia, intente nuevamente";
             }
-
         }catch (Exception e){
-            e.printStackTrace();
-            stringReturn = "No se ha podido guardar la licencia, intente nuevamente";
+            return "No se ha podido guardar la licencia, intente nuevamente";
         }
-        return stringReturn;
     }
+
 }

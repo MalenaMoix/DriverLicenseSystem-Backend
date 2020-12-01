@@ -10,7 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
 @SpringBootApplication
-public class DriverLicenseSystemApplication {
+public class DriverLicenseSystemApplication{
 
     @Autowired
     private ILicenseService iLicenseService;
@@ -18,12 +18,14 @@ public class DriverLicenseSystemApplication {
         SpringApplication.run(DriverLicenseSystemApplication.class, args);
     }
 
-    /* @Override
-    public void run(String... args) throws Exception{
-
-        Owner owner = new Owner();
-        owner.setDocument(40905305);
-        // iLicenseService.calculateLicenseTerm(owner.getDocument());
-    } */
+//    @Override
+//    public void run(String... args) throws Exception{
+//
+//        Owner owner = new Owner();
+//        owner.setDocument(40905305);
+//        License license = new License();
+//        license.setLicenseOwner(owner);
+//        iLicenseService.saveLicense(license);
+//    }
 
 }

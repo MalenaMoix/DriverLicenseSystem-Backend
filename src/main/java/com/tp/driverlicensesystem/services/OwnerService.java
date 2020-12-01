@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 @Service
 public class OwnerService implements IOwnerService{
@@ -65,7 +66,7 @@ public class OwnerService implements IOwnerService{
             owner = iOwnerRepo.findById(ownerId).get();
         }
         catch (Exception e){
-
+            e.printStackTrace();
         }
 
         return owner;

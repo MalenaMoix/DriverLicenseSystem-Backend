@@ -4,6 +4,9 @@ import com.tp.driverlicensesystem.model.License;
 import com.tp.driverlicensesystem.model.Owner;
 import com.tp.driverlicensesystem.repository.ILicenseRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.query.JpaQueryCreator;
+import org.springframework.data.querydsl.binding.QuerydslBindings;
+import org.springframework.data.querydsl.binding.QuerydslBindingsFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -194,6 +197,11 @@ public class LicenseService implements ILicenseService{
             e.printStackTrace();
             return "No se ha podido guardar la licencia, intente nuevamente";
         }
+    }
+
+    @Override
+    public List<License> getExpiredLicenses() {
+        return licenseRepo.getExpiredLicenses(LocalDate.now());
     }
 
 }

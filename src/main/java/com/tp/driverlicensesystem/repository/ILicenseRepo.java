@@ -2,9 +2,15 @@ package com.tp.driverlicensesystem.repository;
 
 import com.tp.driverlicensesystem.model.License;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Repository
 public interface ILicenseRepo extends JpaRepository <License, Integer>{
 
+    @Query(value = "select * from License l where l.license_term < ?1 or l.is_revoked=true order by l.license_start asc", nativeQuery = true)
+    List<License> getExpiredLicenses(LocalDate today);
 }

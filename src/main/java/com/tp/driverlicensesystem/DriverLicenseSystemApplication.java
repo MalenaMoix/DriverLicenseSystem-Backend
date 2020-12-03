@@ -25,7 +25,7 @@ public class DriverLicenseSystemApplication{
 //        owner.setDocument(40905305);
 //        License license = new License();
 //        license.setLicenseOwner(owner);
-//        iLicenseService.saveLicense(license);
+//        iLicenseService.getExpiredLicenses();
 //    }
 
 }

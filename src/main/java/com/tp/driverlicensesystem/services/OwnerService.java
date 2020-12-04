@@ -1,5 +1,6 @@
 package com.tp.driverlicensesystem.services;
 
+import com.tp.driverlicensesystem.model.License;
 import com.tp.driverlicensesystem.model.Owner;
 import com.tp.driverlicensesystem.repository.IOwnerRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ public class OwnerService implements IOwnerService{
 
     @Autowired
     private IOwnerRepo iOwnerRepo;
+    @Autowired
+    private ILicenseService iLicenseService;
 
     @Override
     public Integer getOwnerAge(LocalDate dateOfBirthday) {
@@ -64,6 +67,25 @@ public class OwnerService implements IOwnerService{
 
         try {
             owner = iOwnerRepo.findById(ownerId).get();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return owner;
+    }
+
+    @Override
+    public Owner getOwnerByIdWithCurrentLicenses(Integer ownerId) {
+        Owner owner = new Owner();
+
+        try {
+            owner = iOwnerRepo.findById(ownerId).get();
+            //System.out.println(owner);
+            //Hacemos esto para no generar un StackOverflow del JSON
+            //xq un owner tiene licencias y una licencia tiene un owner y en el JSON se llaman recursivamente
+            //Aca una licencia tiene un OBJETO owner
+            owner.setLicensesList((ArrayList<License>) iLicenseService.getCurrentLicenses(ownerId));
         }
         catch (Exception e){
             e.printStackTrace();

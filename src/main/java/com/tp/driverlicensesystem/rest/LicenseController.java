@@ -1,5 +1,6 @@
 package com.tp.driverlicensesystem.rest;
 
+import com.tp.driverlicensesystem.assistant.PDFGenerator;
 import com.tp.driverlicensesystem.model.License;
 import com.tp.driverlicensesystem.model.Owner;
 import com.tp.driverlicensesystem.services.ILicenseService;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/license")
@@ -50,5 +53,15 @@ public class LicenseController {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    @GetMapping("/licensePDF")
+    public void getLicensePDF(HttpServletResponse response){
+        response.setContentType("application/pdf");
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=prueba1.pdf";
+        response.setHeader(headerKey, headerValue);
+        PDFGenerator pdfGenerator = new PDFGenerator();
+        pdfGenerator.getNewLicensePDF(response);
     }
 }

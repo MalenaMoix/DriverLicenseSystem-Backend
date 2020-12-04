@@ -38,14 +38,13 @@ public class LicenseController {
         License license = new License();
         license.setLicenseClass(licenseClass);
 
+        //TODO: refactorizar para que el metodo devuelva un error si el titular es menor de 17
         try {
             Owner owner = new Owner();
             owner = iOwnerService.getOwnerByIdWithLicensesList(document);
             license.setLicenseOwner(owner);
             license.setLicenseTerm(iLicenseService.calculateLicenseTerm(owner));
-
-            //TODO hacer el metodo para calcular el costo
-            license.setLicenseCost(42.50);
+            license.setLicenseCost(iLicenseService.calculateLicenseCost(licenseClass));
             return license;
         } catch (Exception e) {
             return null;

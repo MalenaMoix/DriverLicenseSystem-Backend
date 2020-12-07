@@ -3,7 +3,6 @@ package com.tp.driverlicensesystem;
 import com.tp.driverlicensesystem.model.License;
 import com.tp.driverlicensesystem.model.Owner;
 import com.tp.driverlicensesystem.services.ILicenseService;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +17,7 @@ class DriverLicenseSystemApplicationTests {
     private ArrayList<Owner> ownerArrayList;
     private ArrayList<License> licenseList;
     private ArrayList<LocalDate> birthDatesList;
+    private ArrayList<String> licenseClassList;
     @Autowired
     ILicenseService iLicenseService;
 
@@ -27,11 +27,14 @@ class DriverLicenseSystemApplicationTests {
         //Cargar datos  a la lista de fechas de nacimiento
         startBirthDateList();
 
-        //Lista de Owners que tendra una fecha de nacimiento segun la lista birthDatesList
+        //Cargar datos a la lista de clases de licencia
+        startLicenseClassList();
+
+        //Lista de Owners que tendran una fecha de nacimiento segun la lista birthDatesList
         ownerArrayList = new ArrayList<>();
         licenseList = new ArrayList<>();
 
-        //Cargamos la lista de Owners a testear con fechas de nacimiento correspondientes a birthDatesList
+        //Cargamos la lista de Owners que seran usados para calcular la vigencia de las licencias a testear
         for (int i=0; i<8; i++){
             Owner owner = new Owner();
             owner.setBirthDate(birthDatesList.get(i));
@@ -48,25 +51,25 @@ class DriverLicenseSystemApplicationTests {
     }
 
     @Test
-    void testCalculateLicenseTerm(){
-        ArrayList<LocalDate> birthDatesResultList = new ArrayList<>();
-        //Inicializar la lista de resultados de fechas que deberia coincidir con lo que retorna el metodo
-        //calculateLicenseTerm()
-        startBirthDatResultList(birthDatesResultList);
+    void testCalculateLicenseCost(){
+        //Inicializar la lista de resultados de precios que deberian coincidir con lo que retorna el metodo calculateLicenseCost()
+        ArrayList<Double> licenseCostResultList = new ArrayList<>();
+        startLicenseCostResultList(licenseCostResultList);
 
-        int i;
-
-        //agregamos licencias, cuya fecha de expiracion se calcula con el metodo a probar
-        // "calculateLicenseTerm(owner), a la lista de licencias que luego se comparara.
-        for(i = 0; i<8; i++){
+        //Agregamos licencias cuya fecha de expiracion se calcula con el metodo calculateLicenseTerm(owner) para luego calcular el precio
+        for(int i=0; i<8; i++){
             License license = new License();
             license.setLicenseTerm(iLicenseService.calculateLicenseTerm(ownerArrayList.get(i)));
+            license.setLicenseCost(iLicenseService.calculateLicenseCost(licenseClassList.get(i)));
             licenseList.add(license);
         }
 
-        for(i = 0; i<8; i++){
-            System.out.println(licenseList.get(i).getLicenseTerm() + "--- " + birthDatesResultList.get(i));
-            Assert.isTrue(licenseList.get(i).getLicenseTerm().equals(birthDatesResultList.get(i)),"The dates should be equals");
+        for(int j=0; j<8; j++){
+            Double response;
+            System.out.println("License cost: "+licenseList.get(j).getLicenseCost()+" --- Expected license cost: "+licenseCostResultList.get(j));
+            Assert.isTrue((response = licenseList.get(j).getLicenseCost()).equals(licenseCostResultList.get(j)),
+                    "Result given: "+response+" --- "+
+                            "Expected result: "+licenseCostResultList.get(j));
         }
     }
 
@@ -90,24 +93,36 @@ class DriverLicenseSystemApplicationTests {
         birthDatesList.add(localDate);
     }
 
+    private void startLicenseClassList() {
+        licenseClassList = new ArrayList<>();
 
-    private void startBirthDatResultList(ArrayList<LocalDate> birthDatesResultList) {
-        LocalDate localDate = LocalDate.of(2025,4,13);
-        birthDatesResultList.add(localDate);
-        localDate = LocalDate.of(2023,4,13);
-        birthDatesResultList.add(localDate);
-        localDate = LocalDate.of(2021,4,13);
-        birthDatesResultList.add(localDate);
-        localDate = LocalDate.of(2025,4,13);
-        birthDatesResultList.add(localDate);
-        localDate = LocalDate.of(2024,4,13);
-        birthDatesResultList.add(localDate);
-        localDate = LocalDate.of(2023,4,13);
-        birthDatesResultList.add(localDate);
-        localDate = LocalDate.of(2024,12,20);
-        birthDatesResultList.add(localDate);
-        localDate = LocalDate.of(2021,4,13);
-        birthDatesResultList.add(localDate);
+        licenseClassList.add("A");
+        licenseClassList.add("A");
+        licenseClassList.add("B");
+        licenseClassList.add("F");
+        licenseClassList.add("E");
+        licenseClassList.add("G");
+        licenseClassList.add("D");
+        licenseClassList.add("C");
+    }
+
+    private void startLicenseCostResultList(ArrayList<Double> licenseCostResultList) {
+        //5 años - clase A
+        licenseCostResultList.add(48.00);
+        //3 años - clase A
+        licenseCostResultList.add(33.00);
+        //1 año - clase B
+        licenseCostResultList.add(28.00);
+        //5 años - clase F
+        licenseCostResultList.add(67.00);
+        //4 años - clase E
+        licenseCostResultList.add(52.00);
+        //3 años - clase G
+        licenseCostResultList.add(33.00);
+        //4 años - clase D
+        licenseCostResultList.add(52.00);
+        //1 año - clase C
+        licenseCostResultList.add(31.00);
     }
 
 

@@ -72,7 +72,7 @@ public class OwnerService implements IOwnerService{
                                 try {
                                     //guardar el titular en la base de datos
                                     iOwnerRepo.save(owner);
-                                    return "exito";
+                                    return "Exito";
                                 }catch (Exception e){
                                     //error al ejecutar el metodo para guardar en la base de datos
                                     System.out.println(e.getMessage());

@@ -29,6 +29,8 @@ public class Owner {
     private String rhFactor;
     @Column
     private Boolean isDonor;
+    @Column
+    private String gender;
 
     @OneToMany(mappedBy = "licenseOwner", fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private List<License> licensesList;
@@ -119,4 +121,12 @@ public class Owner {
 
     public void addLicense(License license){
         licensesList.add(license);}
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
 }

@@ -9,4 +9,5 @@ import java.time.LocalDate;
 public interface ILicenseService {
     LocalDate calculateLicenseTerm(Owner owner);
     String saveLicense(License license);
+    License getLicenseById(Integer idLicense);
 }

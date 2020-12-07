@@ -55,13 +55,17 @@ public class LicenseController {
         }
     }
 
-    @GetMapping("/licensePDF")
-    public void getLicensePDF(HttpServletResponse response){
-        response.setContentType("application/pdf");
-        String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=prueba1.pdf";
-        response.setHeader(headerKey, headerValue);
-        PDFGenerator pdfGenerator = new PDFGenerator();
-        pdfGenerator.getNewLicensePDF(response);
+    @GetMapping("/licensePDF/{idLicense}")
+    public void getLicensePDF(HttpServletResponse response, @PathVariable("idLicense") Integer idLicense){
+       try {
+           response.setContentType("application/pdf");
+           String headerKey = "Content-Disposition";
+           String headerValue = "attachment; filename=prueba1.pdf";
+           response.setHeader(headerKey, headerValue);
+           PDFGenerator pdfGenerator = new PDFGenerator();
+           pdfGenerator.getNewLicensePDF(response, iLicenseService.getLicenseById(idLicense));
+       }catch (Exception e){
+           response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+       }
     }
 }

@@ -197,4 +197,8 @@ public class LicenseService implements ILicenseService{
 
     }
 
+    public License getLicenseById(Integer idLicense){
+        return licenseRepo.findById(idLicense).get();
+    }
+
 }

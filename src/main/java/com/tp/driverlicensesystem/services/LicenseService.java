@@ -75,7 +75,12 @@ public class LicenseService implements ILicenseService{
             for (License license1:licensesList){
                 if (!license1.getIsRevoked() && license1.getLicenseTerm().isAfter(LocalDate.now()) && license1.getLicenseClass().equals(license.getLicenseClass())){
                     //Ya posee una licencia de esta clase.
-                    return "forbidden";
+                    if(license1.getLicenseTerm().isBefore(LocalDate.now().plusDays(45))){
+                        license1.setIsRevoked(true);
+                        licenseRepo.save(license1);
+                    }else{
+                        return "forbidden";
+                    }
                 }
             }
 
@@ -201,4 +206,19 @@ public class LicenseService implements ILicenseService{
         return licenseRepo.findById(idLicense).get();
     }
 
+    @Override
+    public List<License> getCurrentLicenses(Integer ownerId) {
+        List<License> listResult = null;
+        try{
+            listResult=licenseRepo.getCurrentLicenses(ownerId, LocalDate.now());
+            for(License l:listResult){
+                l.setLicenseOwner(null);
+            }
+            //TODO Refactorear
+            return  listResult;
+        }catch (Exception e){
+            return null;
+        }
+
+    }
 }

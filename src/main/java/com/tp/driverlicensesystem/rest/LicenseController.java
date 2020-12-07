@@ -43,7 +43,7 @@ public class LicenseController {
 
         try {
             Owner owner = new Owner();
-            owner = iOwnerService.getOwnerByIdWithLicensesList(document);
+            owner = iOwnerService.getOwnerById(document);
             license.setLicenseOwner(owner);
             license.setLicenseTerm(iLicenseService.calculateLicenseTerm(owner));
 
@@ -51,6 +51,7 @@ public class LicenseController {
             license.setLicenseCost(42.50);
             return license;
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }

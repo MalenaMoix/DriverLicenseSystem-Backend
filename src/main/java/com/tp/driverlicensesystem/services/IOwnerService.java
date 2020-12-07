@@ -10,4 +10,5 @@ public interface IOwnerService {
     void saveOwner(Owner owner);
     Owner getOwnerById(Integer ownerId);
     Owner getOwnerByIdWithLicensesList(Integer ownerId);
+    Owner getOwnerByIdWithCurrentLicenses(Integer ownerId);
 }

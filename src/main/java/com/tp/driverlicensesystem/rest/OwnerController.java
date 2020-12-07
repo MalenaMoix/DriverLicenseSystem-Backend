@@ -15,7 +15,13 @@ public class OwnerController {
 
     @GetMapping(value = "/{id}")
     public Owner getOwnerById(@PathVariable("id") Integer ownerId){
-        return iOwnerService.getOwnerById(ownerId);
+        Owner owner = null;
+        try{
+            owner=iOwnerService.getOwnerByIdWithCurrentLicenses(ownerId);
+        }catch (Exception exception){
+            exception.printStackTrace();
+        }
+        return owner;
     }
 
     @PostMapping

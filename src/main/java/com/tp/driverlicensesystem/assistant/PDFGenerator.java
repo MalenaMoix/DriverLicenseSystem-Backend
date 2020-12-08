@@ -196,9 +196,11 @@ public class PDFGenerator {
             document.add(pPage2);
 
             pPage2 = new Paragraph("Sexo: ", textFontCardBold);
-            pPage2.add(new Phrase(license.getLicenseOwner().getGender().equals("Masculino")?"M  -  ":"F  -  ", textFont));
-            pPage2.add(new Phrase("Factor sanguineo: ", textFontCardBold));
+            pPage2.add(new Phrase(license.getLicenseOwner().getGender().equals("Masculino")?"M ":"F ", textFont));
+            pPage2.add(new Phrase("/  Factor sanguineo: ", textFontCardBold));
             pPage2.add(new Phrase(license.getLicenseOwner().getBloodType()+license.getLicenseOwner().getRhFactor(),textFont));
+            pPage2.add(new Phrase("  / Donante: ", textFontCardBold));
+            pPage2.add(new Phrase(license.getLicenseOwner().getDonor()?"SI":"NO",textFont));
             pPage2.setIndentationLeft(indentationLeft);
             document.add(pPage2);
 

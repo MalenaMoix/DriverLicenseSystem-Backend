@@ -201,7 +201,12 @@ public class LicenseService implements ILicenseService{
 
     @Override
     public List<License> getExpiredLicenses() {
-        return licenseRepo.getExpiredLicenses(LocalDate.now());
+        List<License> resultList = licenseRepo.getExpiredLicenses(LocalDate.now());
+
+        for(License l: resultList){
+            l.getLicenseOwner().setLicensesList(null);
+        }
+        return resultList;
     }
 
 }

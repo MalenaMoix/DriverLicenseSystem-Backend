@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
@@ -55,13 +56,16 @@ public class LicenseController {
     }
 
     @GetMapping(value = "/expiredLicenses")
-    public List<License> getExpiredLicenses(){
+    public List<License> getExpiredLicenses(HttpServletResponse response){
 
-        List<License> listReturn;
+        List<License> listReturn = null;
+
         try {
+            response.setStatus(HttpServletResponse.SC_OK);
             listReturn = iLicenseService.getExpiredLicenses();
+
         }catch (Exception e){
-            listReturn = null;
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
 
         return listReturn;

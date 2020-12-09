@@ -29,8 +29,7 @@ public class Owner {
     private String rhFactor;
     @Column
     private Boolean isDonor;
-
-    @OneToMany(mappedBy = "licenseOwner", fetch = FetchType.EAGER,cascade = CascadeType.ALL,  orphanRemoval = true)
+    @OneToMany(mappedBy = "licenseOwner", fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private List<License> licensesList;
 
     public Owner() {
@@ -120,3 +119,4 @@ public class Owner {
     public void addLicense(License license){
         licensesList.add(license);}
 }
+

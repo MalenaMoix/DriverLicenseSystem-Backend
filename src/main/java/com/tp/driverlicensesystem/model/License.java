@@ -5,26 +5,24 @@ import java.time.LocalDate;
 
 @Entity
 public class License {
-
-    //Necesitamos una fecha de inicio de vigencia? La task de fecha de vencimiento lo dice.
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer idLicense;
-
     @Column
     private LocalDate licenseTerm;
     @Column
-    private String licenseClass;
+    public String licenseClass;
     @Column
     private Double licenseCost;
     @Column (length = 50)
-    private String observations;
+    public String observations;
     @Column
     private LocalDate licenseStart;
-
+    @Column
+    private boolean isRevoked;
     @ManyToOne(fetch = FetchType.EAGER)
-    private Owner licenseOwner;
+    public Owner licenseOwner;
+
 
     public License (){}
 
@@ -76,6 +74,15 @@ public class License {
         this.licenseTerm = licenseTerm;
     }
 
+    public boolean getIsRevoked() {
+        return isRevoked;
+    }
+
+    public void setIsRevoked(boolean isRevoked) {
+        this.isRevoked = isRevoked;
+    }
+
+
     @ManyToOne
     public Owner getLicenseOwner() {
         return licenseOwner;
@@ -99,3 +106,4 @@ public class License {
                 '}';
     }
 }
+

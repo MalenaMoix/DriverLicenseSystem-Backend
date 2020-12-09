@@ -1,7 +1,10 @@
 package com.tp.driverlicensesystem;
 
-import com.tp.driverlicensesystem.model.Owner;
 import com.tp.driverlicensesystem.services.IOwnerService;
+import com.tp.driverlicensesystem.model.License;
+import com.tp.driverlicensesystem.model.Owner;
+import com.tp.driverlicensesystem.services.ILicenseService;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,19 +16,33 @@ import java.util.ArrayList;
 
 @SpringBootTest
 class DriverLicenseSystemApplicationTests {
-
-    private ArrayList<Owner> ownerList;
-
+    private ArrayList<Owner> ownerArrayList;
+    private ArrayList<License> licenseList;
+    private ArrayList<LocalDate> birthDatesList;
     @Autowired
-    IOwnerService iOwnerService;
-
-    @Test
-    void contextLoads() {
-    }
+    ILicenseService iLicenseService;
 
     @BeforeEach
-    void setUp(){
-        //Lista de Owners/Titulares a testear
+    void setUp (){
+
+        //Cargar datos  a la lista de fechas de nacimiento
+        startBirthDateList();
+
+        //Lista de Owners que tendra una fecha de nacimiento segun la lista birthDatesList
+        ownerArrayList = new ArrayList<>();
+        licenseList = new ArrayList<>();
+
+        //Cargamos la lista de Owners a testear con fechas de nacimiento correspondientes a birthDatesList
+        for (int i=0; i<8; i++){
+            Owner owner = new Owner();
+            owner.setBirthDate(birthDatesList.get(i));
+            if(i==1){
+                owner.addLicense(new License());
+            }
+            ownerArrayList.add(owner);
+        }
+      
+      //Lista de Owners/Titulares a testear
         ownerList = new ArrayList<>();
 
         for(int i=0; i<8; i++){
@@ -71,6 +88,17 @@ class DriverLicenseSystemApplicationTests {
         }
     }
 
+
+    private ArrayList<Owner> ownerList;
+
+    @Autowired
+    IOwnerService iOwnerService;
+
+    @Test
+    void contextLoads() {
+    }
+
+
     @Test
     void testRegisterOwner(){
         ArrayList<String> stringsList = new ArrayList<>();
@@ -97,4 +125,68 @@ class DriverLicenseSystemApplicationTests {
         stringsList.add("Tipo de sangre erronea");
         stringsList.add("Factor rh erroneo");
     }
+
+    @Test
+    void testCalculateLicenseTerm(){
+        ArrayList<LocalDate> birthDatesResultList = new ArrayList<>();
+        //Inicializar la lista de resultados de fechas que deberia coincidir con lo que retorna el metodo
+        //calculateLicenseTerm()
+        startBirthDatResultList(birthDatesResultList);
+
+        int i;
+
+        //agregamos licencias, cuya fecha de expiracion se calcula con el metodo a probar
+        // "calculateLicenseTerm(owner), a la lista de licencias que luego se comparara.
+        for(i = 0; i<8; i++){
+            License license = new License();
+            license.setLicenseTerm(iLicenseService.calculateLicenseTerm(ownerArrayList.get(i)));
+            licenseList.add(license);
+        }
+
+        for(i = 0; i<8; i++){
+            System.out.println(licenseList.get(i).getLicenseTerm() + "--- " + birthDatesResultList.get(i));
+            Assert.isTrue(licenseList.get(i).getLicenseTerm().equals(birthDatesResultList.get(i)),"The dates should be equals");
+        }
+    }
+
+    private void startBirthDateList() {
+        birthDatesList = new ArrayList<>();
+        LocalDate localDate = LocalDate.of(1998,4,13);
+        birthDatesList.add(localDate);
+        localDate = LocalDate.of(2000,4,13);
+        birthDatesList.add(localDate);
+        localDate = LocalDate.of(2000,4,13);
+        birthDatesList.add(localDate);
+        localDate = LocalDate.of(1976,4,13);
+        birthDatesList.add(localDate);
+        localDate = LocalDate.of(1973,4,13);
+        birthDatesList.add(localDate);
+        localDate = LocalDate.of(1953,4,13);
+        birthDatesList.add(localDate);
+        localDate = LocalDate.of(1959,12,20);
+        birthDatesList.add(localDate);
+        localDate = LocalDate.of(1949,4,13);
+        birthDatesList.add(localDate);
+    }
+
+
+    private void startBirthDatResultList(ArrayList<LocalDate> birthDatesResultList) {
+        LocalDate localDate = LocalDate.of(2025,4,13);
+        birthDatesResultList.add(localDate);
+        localDate = LocalDate.of(2023,4,13);
+        birthDatesResultList.add(localDate);
+        localDate = LocalDate.of(2021,4,13);
+        birthDatesResultList.add(localDate);
+        localDate = LocalDate.of(2025,4,13);
+        birthDatesResultList.add(localDate);
+        localDate = LocalDate.of(2024,4,13);
+        birthDatesResultList.add(localDate);
+        localDate = LocalDate.of(2023,4,13);
+        birthDatesResultList.add(localDate);
+        localDate = LocalDate.of(2024,12,20);
+        birthDatesResultList.add(localDate);
+        localDate = LocalDate.of(2021,4,13);
+        birthDatesResultList.add(localDate);
+    }
+
 }

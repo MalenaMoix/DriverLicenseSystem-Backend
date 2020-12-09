@@ -5,6 +5,7 @@ import com.tp.driverlicensesystem.services.IOwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import com.tp.driverlicensesystem.services.ILicenseService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,8 +18,15 @@ public class OwnerController {
 
     @GetMapping(value = "/{id}")
     public Owner getOwnerById(@PathVariable("id") Integer ownerId){
-        return iOwnerService.getOwnerById(ownerId);
+        Owner owner = null;
+        try{
+            owner=iOwnerService.getOwnerByIdWithCurrentLicenses(ownerId);
+        }catch (Exception exception){
+            exception.printStackTrace();
+        }
+        return owner;
     }
+
 
     @PostMapping
     public ResponseEntity<Object> saveOwner(@RequestBody Owner owner){

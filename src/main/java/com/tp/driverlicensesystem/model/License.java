@@ -8,7 +8,6 @@ public class License {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer idLicense;
-
     @Column
     private LocalDate licenseTerm;
     @Column
@@ -21,9 +20,9 @@ public class License {
     private LocalDate licenseStart;
     @Column
     private boolean isRevoked;
-
     @ManyToOne(fetch = FetchType.EAGER)
     public Owner licenseOwner;
+
 
     public License (){}
 
@@ -83,6 +82,7 @@ public class License {
         this.isRevoked = isRevoked;
     }
 
+
     @ManyToOne
     public Owner getLicenseOwner() {
         return licenseOwner;
@@ -106,3 +106,4 @@ public class License {
                 '}';
     }
 }
+

@@ -12,7 +12,7 @@ public class Owner {
     //Ver si algun tipo de dato es distinto.
 
     @Id
-    public Integer document;
+    private Integer document;
     @Column(length = 50)
     private String name;
     @Column(length = 50)
@@ -29,7 +29,6 @@ public class Owner {
     private String rhFactor;
     @Column
     private Boolean isDonor;
-
     @OneToMany(mappedBy = "licenseOwner", fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private List<License> licensesList;
 
@@ -120,3 +119,4 @@ public class Owner {
     public void addLicense(License license){
         licensesList.add(license);}
 }
+

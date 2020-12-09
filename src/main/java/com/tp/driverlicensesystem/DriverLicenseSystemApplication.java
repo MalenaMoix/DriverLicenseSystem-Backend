@@ -17,15 +17,4 @@ public class DriverLicenseSystemApplication{
     public static void main(String[] args) {
         SpringApplication.run(DriverLicenseSystemApplication.class, args);
     }
-
-//    @Override
-//    public void run(String... args) throws Exception{
-//
-//        Owner owner = new Owner();
-//        owner.setDocument(40905305);
-//        License license = new License();
-//        license.setLicenseOwner(owner);
-//        iLicenseService.saveLicense(license);
-//    }
-
 }

@@ -4,6 +4,9 @@ import com.tp.driverlicensesystem.model.License;
 import com.tp.driverlicensesystem.model.Owner;
 import com.tp.driverlicensesystem.repository.ILicenseRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.query.JpaQueryCreator;
+import org.springframework.data.querydsl.binding.QuerydslBindings;
+import org.springframework.data.querydsl.binding.QuerydslBindingsFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -20,45 +23,118 @@ public class LicenseService implements ILicenseService{
     @Autowired
     private IOwnerService iOwnerService;
 
+    private int licenseValidity;
+    private final Double ADMINISTRATIVE_COST = 8.00;
+
     @Override
     public LocalDate calculateLicenseTerm(Owner owner) {
 
         int ownerAge = iOwnerService.getOwnerAge(owner.getBirthDate());
-        int add;
         LocalDate licenseTerm = LocalDate.of(LocalDate.now().getYear(),owner.getBirthDate().getMonthValue(), owner.getBirthDate().getDayOfMonth());
 
         if (ownerAge<21){
             if (owner.getLicensesList().isEmpty()){
                 //Dar por un año
-                add = 1;
+                licenseValidity = 1;
             }
             else {
                 //Dar por tres años
-                add = 3;
+                licenseValidity = 3;
             }
         }
         else {
             if (ownerAge<=46){
-                add = 5;
+                licenseValidity = 5;
             }
             else {
                 if(ownerAge<=60){
-                    add = 4;
+                    licenseValidity = 4;
                 }
                 else{
                     if(ownerAge<=70){
-                        add = 3;
+                        licenseValidity = 3;
                     }
                     else {
                         // Mayores de 70 años
-                        add = 1;
+                        licenseValidity = 1;
                     }
                 }
             }
         }
-        LocalDate licenseTermReturn = licenseTerm.plusYears(add);
+        LocalDate licenseTermReturn = licenseTerm.plusYears(licenseValidity);
 
         return licenseTermReturn;
+    }
+
+    @Override
+    public Double calculateLicenseCost(String licenseClass) {
+        Double licenseCost = 0.00;
+
+        //AÑOS DE VALIDEZ
+        switch(licenseValidity) {
+            case 1:
+                //CLASE DE LICENCIA
+                switch(licenseClass) {
+                    case "A":
+                    case "B":
+                    case "G":
+                        licenseCost = ADMINISTRATIVE_COST + 20.00;
+                        break;
+                    case "C":
+                        licenseCost = ADMINISTRATIVE_COST + 23.00;
+                        break;
+                    default:
+                        licenseCost = ADMINISTRATIVE_COST + 29.00;
+                        break;
+                }
+                break;
+            case 3:
+                switch(licenseClass) {
+                    case "A":
+                    case "B":
+                    case "G":
+                        licenseCost = ADMINISTRATIVE_COST + 25.00;
+                        break;
+                    case "C":
+                        licenseCost = ADMINISTRATIVE_COST + 30.00;
+                        break;
+                    default:
+                        licenseCost = ADMINISTRATIVE_COST + 39.00;
+                        break;
+                }
+                break;
+            case 4:
+                switch(licenseClass) {
+                    case "A":
+                    case "B":
+                    case "G":
+                        licenseCost = ADMINISTRATIVE_COST + 30.00;
+                        break;
+                    case "C":
+                        licenseCost = ADMINISTRATIVE_COST + 35.00;
+                        break;
+                    default:
+                        licenseCost = ADMINISTRATIVE_COST + 44.00;
+                        break;
+                }
+                break;
+            case 5:
+                switch(licenseClass) {
+                    case "A":
+                    case "B":
+                    case "G":
+                        licenseCost = ADMINISTRATIVE_COST + 40.00;
+                        break;
+                    case "C":
+                        licenseCost = ADMINISTRATIVE_COST + 47.00;
+                        break;
+                    default:
+                        licenseCost = ADMINISTRATIVE_COST + 59.00;
+                        break;
+                }
+                break;
+        }
+        return licenseCost;
     }
 
     @Override
@@ -204,6 +280,16 @@ public class LicenseService implements ILicenseService{
 
     public License getLicenseById(Integer idLicense){
         return licenseRepo.findById(idLicense).get();
+    }
+
+    @Override
+    public List<License> getExpiredLicenses() {
+        List<License> resultList = licenseRepo.getExpiredLicenses(LocalDate.now());
+
+        for(License l: resultList){
+            l.getLicenseOwner().setLicensesList(null);
+        }
+        return resultList;
     }
 
     @Override

@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.HttpURLConnection;
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/license")
@@ -49,9 +52,7 @@ public class LicenseController {
             owner = iOwnerService.getOwnerById(document);
             license.setLicenseOwner(owner);
             license.setLicenseTerm(iLicenseService.calculateLicenseTerm(owner));
-
-            //TODO hacer el metodo para calcular el costo
-            license.setLicenseCost(42.50);
+            license.setLicenseCost(iLicenseService.calculateLicenseCost(licenseClass));
             return license;
         } catch (Exception e) {
             e.printStackTrace();
@@ -75,4 +76,23 @@ public class LicenseController {
            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
        }
     }
+
+    @GetMapping(value = "/expiredLicenses")
+    public ResponseEntity<List<License>> getExpiredLicenses(){
+
+        List<License> listReturn = null;
+        ResponseEntity<List<License>> responseEntity;
+
+        try {
+
+            listReturn = iLicenseService.getExpiredLicenses();
+            responseEntity = new ResponseEntity<>(listReturn,HttpStatus.OK);
+
+        }catch (Exception e){
+            responseEntity = new ResponseEntity<>(listReturn,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return responseEntity;
+    }
+
 }

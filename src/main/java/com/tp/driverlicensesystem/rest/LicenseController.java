@@ -43,9 +43,7 @@ public class LicenseController {
             owner = iOwnerService.getOwnerById(document);
             license.setLicenseOwner(owner);
             license.setLicenseTerm(iLicenseService.calculateLicenseTerm(owner));
-
-            //TODO hacer el metodo para calcular el costo
-            license.setLicenseCost(42.50);
+            license.setLicenseCost(iLicenseService.calculateLicenseCost(licenseClass));
             return license;
         } catch (Exception e) {
             e.printStackTrace();

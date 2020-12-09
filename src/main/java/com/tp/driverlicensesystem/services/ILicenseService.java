@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface ILicenseService {
     LocalDate calculateLicenseTerm(Owner owner);
+    Double calculateLicenseCost(String licenseClass);
     String saveLicense(License license);
     List<License> getCurrentLicenses(Integer ownerId);
 }

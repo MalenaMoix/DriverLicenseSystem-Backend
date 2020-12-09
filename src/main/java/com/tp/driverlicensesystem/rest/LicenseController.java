@@ -1,21 +1,25 @@
 package com.tp.driverlicensesystem.rest;
 
+import com.tp.driverlicensesystem.assistant.PDFGenerator;
 import com.tp.driverlicensesystem.model.License;
 import com.tp.driverlicensesystem.model.Owner;
 import com.tp.driverlicensesystem.services.ILicenseService;
 import com.tp.driverlicensesystem.services.IOwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.HttpURLConnection;
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/license")
-@CrossOrigin("*")
+@CrossOrigin(origins = "*")
 public class LicenseController {
     @Autowired
     private ILicenseService iLicenseService;
@@ -24,11 +28,12 @@ public class LicenseController {
     private IOwnerService iOwnerService;
 
     @PostMapping
-    public ResponseEntity<String> postLicense(@RequestBody License license){
+    public ResponseEntity<String> postLicense(@RequestBody License license, HttpServletResponse response){
         String message = iLicenseService.saveLicense(license);
+
         switch(message){
             case "success":
-                return new ResponseEntity<>("Se guardo la licencia",HttpStatus.OK);
+                return new ResponseEntity<>(license.getIdLicense().toString(),HttpStatus.OK);
             case "forbidden":
                 return new ResponseEntity<>("Titular no apto para esta licencia.",HttpStatus.FORBIDDEN);
             default:
@@ -53,6 +58,23 @@ public class LicenseController {
             e.printStackTrace();
             return null;
         }
+    }
+
+    @GetMapping(value = "/licensePDF/{idLicense}")
+    public void getLicensePDF(HttpServletResponse response,  @PathVariable("idLicense") Integer idLicense){
+        System.out.println("entra el metodo");
+       try {
+           License license = iLicenseService.getLicenseById(idLicense);
+           response.setContentType("application/pdf");
+           String headerKey = "Content-Disposition";
+           String headerValue = "attachment; filename="+license.getLicenseOwner().getDocument()+"-"+idLicense+".pdf";
+           response.setHeader(headerKey, headerValue);
+           PDFGenerator pdfGenerator = new PDFGenerator();
+           pdfGenerator.getNewLicensePDF(response, iLicenseService.getLicenseById(idLicense));
+
+       }catch (Exception e){
+           response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+       }
     }
 
     @GetMapping(value = "/expiredLicenses")

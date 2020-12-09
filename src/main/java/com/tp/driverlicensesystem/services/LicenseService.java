@@ -275,6 +275,11 @@ public class LicenseService implements ILicenseService{
             e.printStackTrace();
             return "No se ha podido guardar la licencia, intente nuevamente";
         }
+
+    }
+
+    public License getLicenseById(Integer idLicense){
+        return licenseRepo.findById(idLicense).get();
     }
 
     @Override

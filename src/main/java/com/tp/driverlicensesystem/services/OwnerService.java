@@ -72,14 +72,19 @@ public class OwnerService implements IOwnerService{
                             if(owner.getRhFactor().matches("[+]|[-]")){
                                 //valida mediante una expresion regular que el factor de sangre
                                 //sea positivo(+) o negativo(-)
+                                if(owner.getGender().equals("Masculino") || owner.getGender().equals("Femenino")) {
+                                    //Valida que el genero seleccionado sea masculino o femenino
 
-                                try {
-                                    //guardar el titular en la base de datos
-                                    iOwnerRepo.save(owner);
-                                    return "Exito";
-                                }catch (Exception e){
-                                    //error al ejecutar el metodo para guardar en la base de datos
-                                    System.out.println(e.getMessage());
+                                    try {
+                                        //guardar el titular en la base de datos
+                                        iOwnerRepo.save(owner);
+                                        return "Exito";
+                                    } catch (Exception e) {
+                                        //error al ejecutar el metodo para guardar en la base de datos
+                                        System.out.println(e.getMessage());
+                                    }
+                                }else{
+                                    return "Genero erroneo";
                                 }
                             } else {
                                 return "Factor rh erroneo";

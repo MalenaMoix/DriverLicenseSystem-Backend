@@ -1,5 +1,6 @@
 package com.tp.driverlicensesystem.rest;
 
+import com.tp.driverlicensesystem.model.License;
 import com.tp.driverlicensesystem.model.Owner;
 import com.tp.driverlicensesystem.services.IOwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,11 @@ public class OwnerController {
     public Owner getOwnerById(@PathVariable("id") Integer ownerId){
         Owner owner = null;
         try{
-            owner=iOwnerService.getOwnerByIdWithCurrentLicenses(ownerId);
+            owner = iOwnerService.getOwnerByIdWithCurrentLicenses(ownerId);
+            for(License lic:owner.getLicensesList()){
+                lic.setLicenseOwner(null);
+            }
+
         }catch (Exception exception){
             exception.printStackTrace();
         }
@@ -31,9 +36,9 @@ public class OwnerController {
     @PostMapping
     public ResponseEntity<Object> saveOwner(@RequestBody Owner owner){
         String message = iOwnerService.saveOwner(owner);
-
+        System.out.println(message);
         switch(message){
-            case "exito":
+            case "Exito":
                 return new ResponseEntity<>(HttpStatus.OK);
             default:
                 return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);

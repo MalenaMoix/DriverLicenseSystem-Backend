@@ -20,65 +20,45 @@ public class PDFGenerator {
     private HttpServletResponse response;
     private License license;
     private Document document;
+    private Font font, textFont, textFontCardBold;
 
     public PDFGenerator(){
 
     }
 
     public void getNewLicensePDF(HttpServletResponse r, License lic){
+        //response es la respuesta que se devuelve a la solicitud desde el frontend al endpoint.
         response=r;
-        license = lic;
-//        license = new License();
-//        license.setLicenseClass("A");
-//        license.setLicenseTerm(LocalDate.now());
-//        license.setIdLicense(1);
-//        license.setIsRevoked(false);
-//        license.setLicenseStart(LocalDate.of(2018,12,12));
-//        license.setObservations("Estas son observaciones de la licencia");
-//        license.setLicenseCost(20.0);
-//        Owner owner = new Owner();
-//        owner.setBirthDate(LocalDate.of(1998,4,4));
-//        owner.setDocument(40905305);
-//        owner.setDonor(true);
-//        owner.setBloodType("0");
-//        owner.setRhFactor("+");
-//        owner.setName("Tomas");
-//        owner.setLastName("Ravelli");
-//        owner.setAddress("Marcelino escalada Marcelino escalaa Marcelino escalada skks");
-//        owner.setGender("Masculino");
 
-       // license.setLicenseOwner(owner);
+        //Nueva licencia emitida
+        license = lic;
+
         createPDF();
     }
 
     private void createPDF(){
         try {
+            //Se utiliza la libreria OpenPDF
+            //Se crea un nuevo documento.
             document = new Document(PageSize.A4);
+
+            //Se encarga que la instancia document sea enviada al flujo de salida del response, es decir, a la respuesta de la solicitud
+            //al endpoint (localhost:9090/license/licensePDF/"idLicencia")
             PdfWriter.getInstance(document, response.getOutputStream());
 
             document.open();
 
-            //Fuente HELVETICA negrita en tamaño 18
-            Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
-            font.setSize(18);
-            font.setColor(Color.BLACK);
-
-            //Fuente HELVETICA normal en tamaño 16
-            Font textFont = FontFactory.getFont(FontFactory.HELVETICA);
-            textFont.setSize(16);
-            textFont.setColor(Color.BLACK);
-
-            //Fuente HELVETICA negrita en tamaño 16 para el carnet de conducir.
-            Font textFontCardBold = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
-            textFontCardBold.setSize(16);
-            textFontCardBold.setColor(Color.BLACK);
+            //Setear las fuentes a utilizar dentro del PDF.
+            setFonts();
 
             //Sangria
             float indentationLeft = 12;
 
-            firstPdfPage(font, textFont, indentationLeft);
+            //Se crea la primer pagina del PDF, que contiene el comprobante de pago de la nueva licencia.
+            firstPdfPage(indentationLeft);
 
-            secondPdfPage(textFont, textFontCardBold);
+            //Se crea la segunda Pagina del PDF donde se encuentra el nuevo carnet de conducir del titular.
+            secondPdfPage();
 
             document.close();
 
@@ -87,10 +67,28 @@ public class PDFGenerator {
         }
     }
 
+    private void setFonts() {
+        //Fuente HELVETICA negrita en tamaño 18
+        font = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
+        font.setSize(18);
+        font.setColor(Color.BLACK);
 
-    private void firstPdfPage(Font font, Font textFont, float indentationLeft) {
+        //Fuente HELVETICA normal en tamaño 16
+        textFont = FontFactory.getFont(FontFactory.HELVETICA);
+        textFont.setSize(16);
+        textFont.setColor(Color.BLACK);
 
-        Paragraph p = new Paragraph("Emisión licencia de conducir",font);
+        //Fuente HELVETICA negrita en tamaño 16 para el carnet de conducir.
+        textFontCardBold = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
+        textFontCardBold.setSize(16);
+        textFontCardBold.setColor(Color.BLACK);
+    }
+
+
+    private void firstPdfPage(float indentationLeft) {
+
+        //Informacion de la primer pagina del PDF
+        Paragraph p = new Paragraph("Emisión licencia de conducir",font); //Titulo
         p.setAlignment(Paragraph.ALIGN_CENTER);
         p.setSpacingAfter(35);
         document.add(p);
@@ -114,9 +112,9 @@ public class PDFGenerator {
         p.add(lineSeparator);
         document.add(lineSeparator);
 
-        int widths[] = {65,35}; //Ancho de cada columna
+        int widths[] = {65,35}; //Ancho de cada columna de la tabla
         float borderWidth = 3.5f; //Ancho de los bordes de la celda
-        float fixedCellHeight = 40; //Altura de las celdas
+        float fixedCellHeight = 40; //Altura de las celdas de la tabla
 
         //Se crea una tabla con 2 columnas.
         PdfPTable pdfTable = new PdfPTable(2);
@@ -125,17 +123,17 @@ public class PDFGenerator {
 
         //Seteo del ancho de las celdas.
         pdfTable.setWidths(widths);
-        pdfTable.setHeaderRows(1);
 
-        //Metodo para llenar la tabla con los datos correspondientes
-        fillTable(font, textFont, borderWidth, fixedCellHeight, pdfTable);
+        //Metodo para llenar la tabla con los datos correspondientes: gastos administrativos, costo de la licencia, total.
+        fillTable(borderWidth, fixedCellHeight, pdfTable);
 
         //Se agrega la tabla al documento.
         document.add(pdfTable);
     }
 
-    private void fillTable(Font font, Font textFont, float borderWidth, float fixedCellHeight, PdfPTable pdfTable) {
+    private void fillTable(float borderWidth, float fixedCellHeight, PdfPTable pdfTable) {
 
+        //Disposicion de los datos en cada celda dentro de la tabla.
         Phrase phrase;
         PdfPCell cell = new PdfPCell();
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -220,24 +218,26 @@ public class PDFGenerator {
         pdfTable.addCell(cell);
     }
 
-    private void secondPdfPage(Font textFont, Font textFontCardBold) throws IOException {
+    private void secondPdfPage() throws IOException {
 
+        //Se crea la pagina 2 del PDF
         document.newPage();
 
+        //Posicion absoluta de la imagen del titular en el carnet de conducir
         float xImagePosition = document.leftMargin()+30;
-
         float yImagePosition = document.getPageSize().getHeight()-120-document.topMargin()-document.topMargin();
 
-        insertLicenseData(textFont, textFontCardBold);
+        //Disponer e insertar los datos de la nueva licencia en el carnet.
+        insertLicenseData();
 
-        //Insetar imagen del titular en el carnet.
+        //Insetar imagen ejemplo del titular en el carnet.
         Image ownerPhoto = Image.getInstance("src\\main\\resources\\images\\persona.jpg");
         ownerPhoto.scaleAbsolute(120,120);
         ownerPhoto.setAbsolutePosition(xImagePosition,yImagePosition); //Posicion absoluta de la imagen
 
         document.add(ownerPhoto);
 
-        //Se rodea el carnet de conduncir con un rectangulo.
+        //Se rodean los datos con un rectangulo, para simular el carnet de conducir.
         Rectangle border = new Rectangle(36, 490, 559, 806);
 
         border.setBorder(Rectangle.BOX);
@@ -247,11 +247,13 @@ public class PDFGenerator {
         document.add(border);
     }
 
-    private void insertLicenseData(Font textFont, Font textFontCardBold) {
+    private void insertLicenseData() {
 
         float indentationLeft=170;
         Paragraph pPage2;
 
+
+        //Se insertan los datos de la licencia en el nuevo carnet de conducir, la segunda pagina del PDF
         pPage2 = new Paragraph("Apellido: ", textFontCardBold);
         pPage2.add(new Phrase(license.getLicenseOwner().getLastName(), textFont));
         pPage2.setIndentationLeft(indentationLeft);
@@ -307,6 +309,7 @@ public class PDFGenerator {
         pPage2.setIndentationLeft(pPage2.getIndentationLeft()+10);
         document.add(pPage2);
     }
+
 
 
 }

@@ -27,8 +27,34 @@ public class LicenseController {
     @Autowired
     private IOwnerService iOwnerService;
 
+    @GetMapping(value = "/expiredLicenses")
+    public ResponseEntity<List<License>> getExpiredLicenses(){
+
+        List<License> listReturn = null;
+        ResponseEntity<List<License>> responseEntity;
+
+        try {
+            //Solicitar la lista de licencias expiradas a LicenseService
+            listReturn = iLicenseService.getExpiredLicenses();
+            for(License l: listReturn){
+                l.getLicenseOwner().setLicensesList(null);
+            }
+            //Setear en la respuesta al frontend la lista resultado y un codigo HTTP 200
+            responseEntity = new ResponseEntity<>(listReturn,HttpStatus.OK);
+
+        }catch (Exception e){
+            //Setear en la respuesta al frontend la lista resultado y un codigo HTTP 500
+            responseEntity = new ResponseEntity<>(listReturn,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return responseEntity;
+    }
+
+
+
     @PostMapping
     public ResponseEntity<String> postLicense(@RequestBody License license, HttpServletResponse response){
+        //Se recibe la solicitud para emitir una nueva licencia y
+        //LicenseService se encarga de gesitonar dicha solicitud
         String message = iLicenseService.saveLicense(license);
 
         switch(message){
@@ -53,6 +79,7 @@ public class LicenseController {
             license.setLicenseOwner(owner);
             license.setLicenseTerm(iLicenseService.calculateLicenseTerm(owner));
             license.setLicenseCost(iLicenseService.calculateLicenseCost(licenseClass));
+            owner.setLicensesList(null);
             return license;
         } catch (Exception e) {
             e.printStackTrace();
@@ -77,22 +104,6 @@ public class LicenseController {
        }
     }
 
-    @GetMapping(value = "/expiredLicenses")
-    public ResponseEntity<List<License>> getExpiredLicenses(){
 
-        List<License> listReturn = null;
-        ResponseEntity<List<License>> responseEntity;
-
-        try {
-
-            listReturn = iLicenseService.getExpiredLicenses();
-            responseEntity = new ResponseEntity<>(listReturn,HttpStatus.OK);
-
-        }catch (Exception e){
-            responseEntity = new ResponseEntity<>(listReturn,HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        return responseEntity;
-    }
 
 }

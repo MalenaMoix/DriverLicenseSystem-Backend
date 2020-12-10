@@ -11,6 +11,8 @@ import java.util.List;
 @Repository
 public interface ILicenseRepo extends JpaRepository <License, Integer>{
 
+    //Query a la base de datos para poder traer la lista de licencias expiradas, es decir, aquellas cuyas fechas de expiracion sean menor
+    // a la fecha actual, o que hayan sido revocadas.
     @Query(value = "select * from License l where l.license_term < ?1 or l.is_revoked=true order by l.license_start asc", nativeQuery = true)
     List<License> getExpiredLicenses(LocalDate today);
 

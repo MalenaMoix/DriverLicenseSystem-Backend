@@ -65,7 +65,7 @@ public class OwnerService implements IOwnerService{
                     if(getOwnerAge(owner.getBirthDate()) > 16){
                         //valida que el titular tenga la edad apropiada
 
-                        if(owner.getBloodType().matches("[A]|[B]|[AB]|[O]")){
+                        if(owner.getBloodType().matches("[A]|[B]|(AB)|[O]")){
                             //valida mediante una expresion regular que el tipo de sangre sea
                             //A, B, AB u O
 
@@ -114,30 +114,11 @@ public class OwnerService implements IOwnerService{
 
         try {
             owner = iOwnerRepo.findById(ownerId).get();
-            //System.out.println(owner);
-            //Hacemos esto para no generar un StackOverflow del JSON
-            //xq un owner tiene licencias y una licencia tiene un owner y en el JSON se llaman recursivamente
-            //Aca una licencia tiene un OBJETO owner
-            owner.setLicensesList(null);
         }
         catch (Exception e){
 
         }
 
-        return owner;
-    }
-
-    @Override
-    public Owner getOwnerByIdWithLicensesList(Integer ownerId) {
-
-        Owner owner = new Owner();
-
-        try {
-            owner = iOwnerRepo.findById(ownerId).get();
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
         return owner;
     }
 
@@ -147,10 +128,6 @@ public class OwnerService implements IOwnerService{
 
         try {
             owner = iOwnerRepo.findById(ownerId).get();
-            //System.out.println(owner);
-            //Hacemos esto para no generar un StackOverflow del JSON
-            //xq un owner tiene licencias y una licencia tiene un owner y en el JSON se llaman recursivamente
-            //Aca una licencia tiene un OBJETO owner
             owner.setLicensesList((ArrayList<License>) iLicenseService.getCurrentLicenses(ownerId));
         }
         catch (Exception e){
